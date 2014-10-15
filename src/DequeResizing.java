@@ -2,19 +2,24 @@
  * @author Max Scheiber (scheiber), 14fa
  */
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
 	E[] elements;
-	//note that size = backIndex - frontIndex
+	//note that the front can wrap around to the back of elements
+	//in the case that we offerFront and there is no space at the 
+	//front
 	private int frontIndex;
 	private int backIndex;
+	private int dequeSize;
 	
     @SuppressWarnings("unchecked")
 	public DequeResizing() {
     	//initialize initial array with size 2
         elements = (E[]) new Object[2];
-        frontIndex = 0;
-        backIndex = 0;
+        frontIndex = -1;
+        backIndex = -1;
+        dequeSize = 0;
     }
 
     /**
@@ -22,10 +27,7 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public boolean isEmpty() {
-        if ((backIndex - frontIndex) > 0) {
-        	return true;
-        }
-        return false;
+        return dequeSize == 0;
     }
 
     /**
@@ -33,7 +35,7 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public int size() {
-        return (backIndex - frontIndex);
+    	return dequeSize;        
     }
 
     /**
@@ -42,11 +44,32 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public boolean contains(Object o) {
-        for (int i = frontIndex; i <= backIndex; i++) {
-        	if (elements[i] == o) {
-        		return true;
-        	}
-        }
+    	//check if deque is empty
+    	if (dequeSize == 0) {
+    		return false;
+    	}
+    	if (backIndex > frontIndex) {
+    		//no wrapping has occurred
+	        for (int i = frontIndex; i <= backIndex; i++) {
+	        	if (elements[i].equals(o)) {
+	        		return true;
+	        	}
+	        }
+    	} else {
+    		//wrapping has occurred. first check back of array then wrap around
+    		for (int i = frontIndex; i < elements.length; i++) {
+    			if (elements[i].equals(o)) {
+	        		return true;
+	        	}
+    		}
+    		//now go to front
+    		for (int i = 0; i <= backIndex; i++) {
+    			if (elements[i].equals(o)) {
+	        		return true;
+	        	}
+    		}
+    	}
+    	//o was not found in elements
         return false;
     }
 
@@ -57,7 +80,19 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public void offerFront(E elem) {
-        // TODO: unimplemented
+    	//check if there is an empty spot to the left of frontIndex
+    	if (frontIndex > 0) {
+    		frontIndex--;    		
+    	} else {
+    		//find rightmost index that's free
+    		frontIndex = backIndex + (elements.length - dequeSize);
+    	}
+    	elements[frontIndex] = elem;
+    	dequeSize++;
+    	//check if we need to double the size of the array
+    	if (dequeSize == elements.length) {
+    		resize(elements.length*2);
+    	}
     }
 
     /**
@@ -67,7 +102,18 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public void offerBack(E elem) {
-        // TODO: unimplemented
+    	//check if there is an emtpty spot to the right of backIndex
+    	if (backIndex < (elements.length - 1)) {
+    		backIndex++;
+    	} else {
+    		//find the leftmost element that's free
+    		backIndex = frontIndex - (elements.length - dequeSize);
+    	}
+    	elements[backIndex] = elem;
+    	dequeSize++;
+    	if (dequeSize == elements.length) {
+    		resize(elements.length*2);
+    	}
     }
 
     /**
@@ -78,8 +124,27 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public E pollFront() {
-        // TODO: unimplemented
-        return null;
+        if (isEmpty()) {
+        	return null;
+        }
+        E elemToReturn = elements[frontIndex];
+        elements[frontIndex] = null;
+        frontIndex++;
+        //if we've gone over the rightside edge of the array, 
+        //the frontIndex goes back to the left of the array
+        if (frontIndex >= elements.length) {
+        	frontIndex = 0;
+        }
+        dequeSize--;
+        if (dequeSize == 0) {
+        	//note that in this case we will keep the array's size at 2 despite
+        	//having no elements
+        	frontIndex = -1;
+        	backIndex = -1;
+        } else if (dequeSize*4 <= elements.length) {
+        	resize(elements.length/2);
+        }
+        return elemToReturn;
     }
 
     /**
@@ -90,8 +155,27 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public E pollBack() {
-        // TODO: unimplemented
-        return null;
+        if (isEmpty()) {
+        	return null;
+        }
+        E elemToReturn = elements[backIndex];
+        elements[backIndex] = null;
+        backIndex--;
+        //if we've gone past the left side of the array, the frontIndex goes
+        //back to the rightmost part of the array
+        if (backIndex < 0) {
+        	backIndex = elements.length - 1;
+        }
+        dequeSize--;
+        if (dequeSize == 0) {
+        	//note that in this case we will keep the array's size at 2 despite
+        	//having no elements
+        	frontIndex = -1;
+        	backIndex = -1;
+        } else if (dequeSize*4 <= elements.length) {
+        	resize(elements.length/2);
+        }
+        return elemToReturn;
     }
 
     /**
@@ -102,8 +186,10 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public E peekFront() {
-        // TODO: unimplemented
-        return null;
+    	if (isEmpty()) {
+        	return null;
+        }
+        return elements[frontIndex];
     }
 
     /**
@@ -114,8 +200,10 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public E peekBack() {
-        // TODO: unimplemented
-        return null;
+    	if (isEmpty()) {
+        	return null;
+        }
+        return elements[frontIndex];
     }
 
     /**
@@ -127,8 +215,37 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public Iterator<E> iterator() {
-        // TODO: unimplemented
-        return null;
+        return new ForwardIterator();
+    }
+    
+    private class ForwardIterator implements Iterator<E> {
+    	private int curIndex = frontIndex;
+		private int remainingElements = dequeSize;
+
+		@Override
+		public boolean hasNext() {
+			return !(remainingElements == 0);
+		}
+
+		@Override
+		public E next() {
+			if (remainingElements == 0) {
+				throw new NoSuchElementException();
+			}
+			else {
+				E curItem = elements[curIndex];
+				curIndex++;
+				if (curIndex == elements.length) {
+					curIndex = 0;
+				}
+				return curItem;
+			}
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
     }
 
     /**
@@ -136,7 +253,56 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public Iterator<E> iteratorRev() {
-        // TODO: unimplemented
-        return null;
+        return new BackwardIterator();
+    }
+    
+    private class BackwardIterator implements Iterator<E> {
+    	private int curIndex = frontIndex;
+		private int remainingElements = dequeSize;
+
+		@Override
+		public boolean hasNext() {
+			return !(remainingElements == 0);
+		}
+
+		@Override
+		public E next() {
+			if (remainingElements == 0) {
+				throw new NoSuchElementException();
+			}
+			else {
+				E curItem = elements[curIndex];
+				curIndex--;
+				if (curIndex == -1) {
+					curIndex = elements.length - 1;
+				}
+				return curItem;
+			}
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+    }
+    
+    private void resize(int newSize) {
+    	//check to make sure that new array is still long enough to 
+    	//fit the deque
+    	if (newSize < dequeSize) {
+    		throw new IllegalArgumentException();
+    	}
+    	@SuppressWarnings("unchecked")
+		E[] newElementsArray = (E[]) new Object[newSize];
+    	Iterator<E> iterator = this.iterator();
+    	int indexInNewArray = 0;
+    	while (iterator.hasNext()) {
+    		E curItem = iterator.next();
+    		newElementsArray[indexInNewArray] = curItem;
+    		indexInNewArray++;
+    	}
+    	frontIndex = 0;
+    	backIndex = indexInNewArray - 1;
+    	elements = newElementsArray;   	
     }
 }
