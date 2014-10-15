@@ -9,7 +9,6 @@ public class DequeResizingTest {
 	public void testIsEmpty() {
 		DequeI<String> deqStack = new DequeResizing<String>();
 		assertTrue(deqStack.isEmpty());
-		assertEquals(5,5);
 	}
 
 }
