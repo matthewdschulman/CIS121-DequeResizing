@@ -1,3 +1,5 @@
+import java.util.EmptyStackException;
+
 /**
  * Most of the Javadocs here were lifted from the Javadocs of the Stack class of
  * OpenJDK 6.
@@ -6,8 +8,10 @@
  */
 
 public class DequeStack<E> {
+	private DequeI<E> deqStack;
+	
     public DequeStack() {
-        // TODO: unimplemented
+        deqStack = new DequeResizing<E>();
     }
 
     /**
@@ -18,8 +22,8 @@ public class DequeStack<E> {
      * @return the item argument
      */
     public E push(E item) {
-        // TODO: unimplemented
-        return null;
+        deqStack.offerFront(item);
+        return item;
     }
 
     /**
@@ -31,8 +35,10 @@ public class DequeStack<E> {
      *             if this stack is empty
      */
     public E pop() {
-        // TODO: unimplemented
-        return null;
+    	if (empty()) {
+    		throw new EmptyStackException();
+    	}
+    	return deqStack.pollFront();
     }
 
     /**
@@ -44,15 +50,13 @@ public class DequeStack<E> {
      *             if this stack is empty
      */
     public E peek() {
-        // TODO: unimplemented
-        return null;
+        return deqStack.peekFront();
     }
 
     /**
      * @return true if and only if the stack has no items, false otherwise
      */
     public boolean empty() {
-        // TODO: unimplemented
-        return false;
+        return deqStack.isEmpty();
     }
 }
