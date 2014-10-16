@@ -17,9 +17,6 @@ public class PostfixCalculator {
      *             postfix expression is empty
      */
     public static float calculate(String expr) throws IllegalArgumentException {
-        if (!isValid(expr)) {
-        	throw new IllegalArgumentException();
-        }
         //create stack of postfix expression
         Tokenizer tokenizer = new Tokenizer(expr);
         DequeStack<String> stack = new DequeStack<String>();
@@ -49,28 +46,28 @@ public class PostfixCalculator {
 	}
 
 	private static DequeStack<String> updateStack(DequeStack<String> stack) {
-		if (stack.pop().equals("+")) {
+		if (stack.peek().equals("+")) {
 			makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) + Float.parseFloat(stack.pop())));
-		} else if (stack.pop().equals("*")) {
+		} else if (stack.peek().equals("*")) {
 			makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) * Float.parseFloat(stack.pop())));
-		} else if (stack.pop().equals("/")) {
+		} else if (stack.peek().equals("/")) {
 			makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) / Float.parseFloat(stack.pop())));
-		} else if (stack.pop().equals("-")) {
+		} else if (stack.peek().equals("-")) {
 			makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) - Float.parseFloat(stack.pop())));
-		} else if (stack.pop().equals("^")) {
+		} else if (stack.peek().equals("^")) {
 			makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Math.pow(Float.parseFloat(stack.pop()),Float.parseFloat(stack.pop()))));
-		} else if (stack.pop().equals("max")) {
+		} else if (stack.peek().equals("max")) {
 			makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Math.max(Float.parseFloat(stack.pop()),Float.parseFloat(stack.pop()))));
-		} else if (stack.pop().equals("sin")) {
+		} else if (stack.peek().equals("sin")) {
 			makeSureTopOneElementIsANumbers(stack);
 			stack.push(String.valueOf(Math.sin(Float.parseFloat(stack.pop()))));
-		} else if (stack.pop().equals("cos")) {
+		} else if (stack.peek().equals("cos")) {
 			makeSureTopOneElementIsANumbers(stack);
 			stack.push(String.valueOf(Math.cos(Float.parseFloat(stack.pop()))));
 		} else {
@@ -80,6 +77,9 @@ public class PostfixCalculator {
 	}
 
 	private static void makeSureTopOneElementIsANumbers(DequeStack<String> stack) {
+		if (stack.empty()) {
+			throw new IllegalArgumentException();
+		}
 		if (!stack.peek().matches("-?\\d+(\\.\\d+)?")) {
 			throw new IllegalArgumentException();
 		}
@@ -88,6 +88,9 @@ public class PostfixCalculator {
 	private static void makeSureTopTwoElementsAreNumbers(
 			DequeStack<String> stack) {
 		String topNumber = stack.pop();
+		if (stack.empty()) {
+			throw new IllegalArgumentException();
+		}
 		if (!topNumber.matches("-?\\d+(\\.\\d+)?") || !stack.peek().matches("-?\\d+(\\.\\d+)?")) {
 			throw new IllegalArgumentException();
 		}
