@@ -31,7 +31,7 @@ public class InfixToPostfix {
         	if (current.matches("-?\\d+(\\.\\d+)?")) {
         		output += current + " ";
         	} else if (isSimpleOperator(current)){
-        		while (!stack.empty() && precedenceIsLessOrEqual(current, stack.peek())) { //WILL THIS GO INTO THIS SHIT HERE ON THE RIGHT?
+        		while (!stack.empty() && precedenceIsLessOrEqual(current, stack.peek())) {
         			output += stack.pop() + " ";
         		}
         		stack.push(current);
@@ -40,7 +40,6 @@ public class InfixToPostfix {
         while(!stack.empty()) {
         	output += stack.pop() + " ";
         }
-        System.out.println(output.trim());
         return output.trim();
     }
 
@@ -57,8 +56,41 @@ public class InfixToPostfix {
      */
     public static String mediumShuntingYard(String input)
             throws UnmatchedParenthesesException {
-        // TODO: unimplemented
-        return null;
+    	if (input == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	Tokenizer tokenizer = new Tokenizer(input);
+        DequeStack<String> stack = new DequeStack<String>();
+        Iterator<String> iterator = tokenizer.getIterator();
+        String output = "";
+        while (iterator.hasNext()) {
+        	String current = iterator.next();
+        	if (current.matches("-?\\d+(\\.\\d+)?")) {
+        		output += current + " ";
+        	} else if (isSimpleOperator(current)){
+        		while (!stack.empty() && precedenceIsLessOrEqual(current, stack.peek()) && !stack.peek().equals("(")) {
+        			output += stack.pop() + " ";
+        		}
+        		stack.push(current);
+        	} else if (current.equals("(")) {
+        		stack.push(current);
+        	} else if (current.equals(")")) {
+        		while (!stack.empty() && !stack.peek().equals("(")) {
+        			output += stack.pop() + " ";
+        		}
+        		//get rid of the (
+        		stack.pop();
+        	}
+        }
+        while(!stack.empty()) {
+        	String nextAppendage = stack.pop();
+        	if (nextAppendage.equals("(")) {
+        		throw new UnmatchedParenthesesException();
+        	}
+        	output += nextAppendage + " ";
+        }
+        System.out.println(output.trim());
+        return output.trim();
     }
 
     /**

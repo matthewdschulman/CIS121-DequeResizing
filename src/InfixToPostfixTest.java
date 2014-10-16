@@ -33,8 +33,25 @@ public class InfixToPostfixTest {
 		converter.simpleShuntingYard(null);
 	}
 	
-	public void testCasesForMediumShuntingYard() {
-		
+	@SuppressWarnings("static-access")
+	@Test
+	public void testCasesForMediumShuntingYard() throws UnmatchedParenthesesException {
+		assertEquals("5 4 - 4 *", converter.mediumShuntingYard("( 5 - 4 ) * 4"));		
+		assertEquals("3 4 - 2 5 3 - * /", converter.mediumShuntingYard("( 3 - 4 ) / ( 2 * ( 5 - 3 ) )"));	
+	}
+	
+	@SuppressWarnings("static-access")
+	@Test
+	public void unmatchedParentheses() throws UnmatchedParenthesesException {
+		exception.expect(UnmatchedParenthesesException.class);
+		converter.mediumShuntingYard("( 5 - 4 * 4");
+	}
+	
+	@SuppressWarnings("static-access")
+	@Test
+	public void testCasesForShuntingYard() throws UnmatchedParenthesesException {
+		assertEquals("5 4 - 4 *", converter.shuntingYard("( 5 - 4 ) * 4"));		
+		assertEquals("3 4 - 2 5 3 - * /", converter.shuntingYard("( 3 - 4 ) / ( 2 * ( 5 - 3 ) )"));	
 	}
 
 }
