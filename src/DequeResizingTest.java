@@ -33,12 +33,31 @@ public class DequeResizingTest {
 	}
 	
 	@Test
-	public void testOfferFront() {
+	public void testOfferFrontAndContains() {
+		assertFalse(deqStack.contains("element"));
 		assertTrue(deqStack.size() == 0);
 		deqStack.offerFront("element Uno");
 		assertTrue(deqStack.size() == 1);
 		deqStack.offerFront("element Dos");
 		assertTrue(deqStack.size() == 2);
+		//element Dos should be at top of stack
+		assertEquals("element Dos",deqStack.peekFront());
+		assertTrue(deqStack.contains("element Dos"));
+		assertFalse(deqStack.contains("element"));
+	}
+	
+	@Test
+	public void testOfferBackAndPeeking() {
+		assertTrue(deqStack.size() == 0);
+		deqStack.offerBack("element Uno");
+		assertTrue(deqStack.size() == 1);
+		deqStack.offerBack("element Dos");
+		assertTrue(deqStack.size() == 2);
+		//element Uno should be at top of stack
+		assertEquals("element Uno", deqStack.peekFront());
+		assertEquals("element Dos", deqStack.peekBack());
+		deqStack.offerBack("element Tres");
+		assertEquals("element Tres", deqStack.peekBack());
 	}
 
 }

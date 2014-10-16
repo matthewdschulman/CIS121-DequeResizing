@@ -211,7 +211,7 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
     	if (isEmpty()) {
         	return null;
         }
-        return elements[frontIndex];
+        return elements[backIndex];
     }
 
     /**
