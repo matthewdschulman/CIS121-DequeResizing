@@ -54,13 +54,19 @@ public class PostfixCalculator {
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) * Float.parseFloat(stack.pop())));
 		} else if (stack.peek().equals("/")) {
 			stack = makeSureTopTwoElementsAreNumbers(stack);
-			stack.push(String.valueOf(Float.parseFloat(stack.pop()) / Float.parseFloat(stack.pop())));
+			String first = stack.pop();
+			String second = stack.pop();
+			stack.push(String.valueOf(Float.parseFloat(second) / Float.parseFloat(first)));
 		} else if (stack.peek().equals("-")) {
 			stack = makeSureTopTwoElementsAreNumbers(stack);
-			stack.push(String.valueOf(Float.parseFloat(stack.pop()) - Float.parseFloat(stack.pop())));
+			String first = stack.pop();
+			String second = stack.pop();
+			stack.push(String.valueOf(Float.parseFloat(second) - Float.parseFloat(first)));
 		} else if (stack.peek().equals("^")) {
 			stack = makeSureTopTwoElementsAreNumbers(stack);
-			stack.push(String.valueOf(Math.pow(Float.parseFloat(stack.pop()),Float.parseFloat(stack.pop()))));
+			String first = stack.pop();
+			String second = stack.pop();
+			stack.push(String.valueOf(Math.pow(Float.parseFloat(second),Float.parseFloat(first))));
 		} else if (stack.peek().equals("max")) {
 			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Math.max(Float.parseFloat(stack.pop()),Float.parseFloat(stack.pop()))));
