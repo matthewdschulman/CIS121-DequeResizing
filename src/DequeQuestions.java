@@ -7,47 +7,41 @@ public class DequeQuestions {
      * What is the runtime of DequeLL.contains()?
      */
     public Runtime question1() {
-        // TODO: unimplemented
-        return null;
+        return Runtime.LINEAR;
     }
 
     /**
      * What is the runtime of DequeLL.offerBack()?
      */
     public Runtime question2() {
-        // TODO: unimplemented
-        return null;
+    	return Runtime.LINEAR;
     }
 
     /**
      * What is the runtime of DequeLL.pollFront()?
      */
     public Runtime question3() {
-        // TODO: unimplemented
-        return null;
+    	return Runtime.CONSTANT;
     }
 
     /**
      * What is the runtime of DequeResizing.contains()?
      */
     public Runtime question4() {
-        // TODO: unimplemented
-        return null;
+    	return Runtime.LINEAR;
     }
 
     /**
      * What is the runtime of DequeResizing.offerBack()?
      */
     public Runtime question5() {
-        // TODO: unimplemented
-        return null;
+    	return Runtime.CONSTANT;
     }
 
     /**
      * What is the runtime of DequeResizing.pollFront()?
      */
     public Runtime question6() {
-        // TODO: unimplemented
-        return null;
+    	return Runtime.CONSTANT;
     }
 }

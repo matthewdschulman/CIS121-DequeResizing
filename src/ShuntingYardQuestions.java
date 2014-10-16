@@ -11,8 +11,7 @@ public class ShuntingYardQuestions {
      * @return answer
      */
     public Runtime question1() {
-        // TODO: unimplemented
-        return null;
+        return Runtime.LINEAR;
     }
 
     /**
@@ -22,8 +21,7 @@ public class ShuntingYardQuestions {
      * @return answer
      */
     public Runtime question2() {
-        // TODO: unimplemented
-        return null;
+        return Runtime.EXPONENTIAL;
     }
 
     /**
@@ -31,8 +29,7 @@ public class ShuntingYardQuestions {
      * the shunting-yard algorithm. * + -
      */
     public Boolean question3() {
-        // TODO: unimplemented
-        return null;
+        return false;
     }
 
     /**
@@ -40,7 +37,6 @@ public class ShuntingYardQuestions {
      * the shunting-yard algorithm. ^ ^ ^
      */
     public Boolean question4() {
-        // TODO: unimplemented
-        return null;
+        return true;
     }
 }
