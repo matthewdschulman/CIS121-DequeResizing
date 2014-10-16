@@ -1,5 +1,7 @@
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,6 +46,7 @@ public class DequeResizingTest {
 		assertEquals("element Dos",deqStack.peekFront());
 		assertTrue(deqStack.contains("element Dos"));
 		assertFalse(deqStack.contains("element"));
+		assertEquals(2, deqStack.size());
 	}
 	
 	@Test
@@ -58,6 +61,55 @@ public class DequeResizingTest {
 		assertEquals("element Dos", deqStack.peekBack());
 		deqStack.offerBack("element Tres");
 		assertEquals("element Tres", deqStack.peekBack());
+		assertEquals(3, deqStack.size());
+	}
+	
+	@Test
+	public void testPollFront() {
+		deqStack.offerBack("element Uno");
+		deqStack.offerBack("element Dos");
+		deqStack.offerBack("element Tres");
+		assertEquals("element Uno",deqStack.pollFront());
+		assertEquals(2,deqStack.size());
+		assertEquals("element Dos", deqStack.peekFront());
+		deqStack.pollFront();
+		deqStack.pollFront();
+		assertEquals(0, deqStack.size());
+	}
+	
+	@Test
+	public void testPollBack() {
+		deqStack.offerBack("element Uno");
+		deqStack.offerBack("element Dos");
+		deqStack.offerBack("element Tres");
+		assertEquals("element Tres",deqStack.pollBack());
+		assertEquals(2,deqStack.size());
+		assertEquals("element Dos", deqStack.peekBack());
+		deqStack.pollBack();
+		deqStack.pollBack();
+		assertEquals(0, deqStack.size());
+	}
+	
+	@Test
+	public void testIterators() {
+		deqStack.offerBack("element Uno");
+		deqStack.offerBack("element Dos");
+		
+		//first test forward Iterators
+		Iterator<String> forwardIterator = deqStack.iterator();
+		assertTrue(forwardIterator.hasNext());
+		forwardIterator.next();
+		assertTrue(forwardIterator.hasNext());
+		forwardIterator.next();
+		assertFalse(forwardIterator.hasNext());
+		
+		//next test Backward Iterators
+		Iterator<String> backwardIterator = deqStack.iterator();
+		assertTrue(backwardIterator.hasNext());
+		backwardIterator.next();
+		assertTrue(backwardIterator.hasNext());
+		backwardIterator.next();
+		assertFalse(backwardIterator.hasNext());
 	}
 
 }
