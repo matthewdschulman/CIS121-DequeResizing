@@ -80,8 +80,12 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public void offerFront(E elem) {
-    	//check if there is an empty spot to the left of frontIndex
-    	if (frontIndex > 0) {
+    	//check if deque is empty
+    	if (dequeSize == 0) {
+    		frontIndex = 0;
+    		backIndex = 0;
+    	} else if (frontIndex > 0) {
+    		//there is an empty spot to the left of frontIndex
     		frontIndex--;    		
     	} else {
     		//find rightmost index that's free
@@ -102,8 +106,12 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
      */
     @Override
     public void offerBack(E elem) {
-    	//check if there is an emtpty spot to the right of backIndex
-    	if (backIndex < (elements.length - 1)) {
+    	//check if deque is empty
+    	if (dequeSize == 0) {
+    		frontIndex = 0;
+    		backIndex = 0;
+    	} else if (backIndex < (elements.length - 1)) {
+    		//there is an empty spot to the right of backIndex
     		backIndex++;
     	} else {
     		//find the leftmost element that's free
@@ -238,6 +246,7 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
 				if (curIndex == elements.length) {
 					curIndex = 0;
 				}
+				remainingElements--;
 				return curItem;
 			}
 		}
@@ -276,6 +285,7 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
 				if (curIndex == -1) {
 					curIndex = elements.length - 1;
 				}
+				remainingElements--;
 				return curItem;
 			}
 		}
@@ -294,10 +304,11 @@ public class DequeResizing<E> implements DequeI<E>, Iterable<E> {
     	}
     	@SuppressWarnings("unchecked")
 		E[] newElementsArray = (E[]) new Object[newSize];
-    	Iterator<E> iterator = this.iterator();
+    	Iterator<E> iterator = iterator();
     	int indexInNewArray = 0;
     	while (iterator.hasNext()) {
     		E curItem = iterator.next();
+    		System.out.print(curItem);
     		newElementsArray[indexInNewArray] = curItem;
     		indexInNewArray++;
     	}
