@@ -107,8 +107,59 @@ public class InfixToPostfix {
      */
     public static String shuntingYard(String input)
             throws UnmatchedParenthesesException {
-        // TODO: unimplemented
-        return null;
+    	if (input == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	Tokenizer tokenizer = new Tokenizer(input);
+        DequeStack<String> stack = new DequeStack<String>();
+        Iterator<String> iterator = tokenizer.getIterator();
+        String output = "";
+        while (iterator.hasNext()) {
+        	String current = iterator.next();
+        	if (current.matches("-?\\d+(\\.\\d+)?")) {
+        		output += current + " ";
+        	} else if (isSimpleOperator(current)){
+        		while (!stack.empty() && precedenceIsLessOrEqual(current, stack.peek()) && !stack.peek().equals("(")) {
+        			if (stack.peek().equals(",")) {
+        				stack.pop();
+        			}
+        			output += stack.pop() + " ";
+        		}
+        		stack.push(current);
+        	} else if (current.equals("(")) {
+        		stack.push(current);
+        	} else if (current.equals(")") || current.equals(",")) {
+        		while (!stack.empty() && !stack.peek().equals("(")) {
+        			output += stack.pop() + " ";
+        		}
+        		//get rid of the ( except in max function
+        		if (!current.equals(",")) {
+        			stack.pop();
+        		}
+        	} else if (current.equals("^")) {
+        		while (!stack.empty() && precedenceIsLessOrEqual(current, stack.peek()) && !stack.peek().equals("(")) {
+        			if (stack.peek().equals(",")) {
+        				stack.pop();
+        			}
+        			output += stack.pop() + " ";
+        		}
+        		stack.push(current);
+        	} else if (current.equals("max") || current.equals("sin") || current.equals("cos")) {
+        		stack.push(current);
+        	}
+        }
+        while(!stack.empty()) {
+        	String nextAppendage = stack.pop();
+        	if (nextAppendage.equals("(")) {
+        		throw new UnmatchedParenthesesException();
+        	}
+        	if (nextAppendage.equals(",")) {
+				stack.pop();
+			}
+        	output += nextAppendage + " ";
+        }
+        System.out.println(output.trim());
+        return output.trim();
     }
     
   //states if "current" has lower or equal precedence to "peek"

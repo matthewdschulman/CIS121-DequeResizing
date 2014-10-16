@@ -50,8 +50,15 @@ public class InfixToPostfixTest {
 	@SuppressWarnings("static-access")
 	@Test
 	public void testCasesForShuntingYard() throws UnmatchedParenthesesException {
-		assertEquals("5 4 - 4 *", converter.shuntingYard("( 5 - 4 ) * 4"));		
-		assertEquals("3 4 - 2 5 3 - * /", converter.shuntingYard("( 3 - 4 ) / ( 2 * ( 5 - 3 ) )"));	
+		assertEquals("5 4 - 4 ^", converter.shuntingYard("( 5 - 4 ) ^ 4"));		
+		assertEquals("4 5 4 - ^", converter.shuntingYard("4 ^ ( 5 - 4 )"));	
+		assertEquals("3 5 max", converter.shuntingYard("max ( 3 , 5 )"));	
+		assertEquals("3 4 - 6 4 ^ max 4 * 2 /", converter.shuntingYard("max ( 3 - 4 , 6 ^ 4 ) * 4 / 2"));
+		assertEquals("2 sin", converter.shuntingYard("sin ( 2 )"));
+		assertEquals("2 cos", converter.shuntingYard("cos ( 2 )"));		
+		assertEquals("4 sin cos", converter.shuntingYard("cos ( sin ( 4 ) )"));
+		assertEquals("3 4 2 sin / - 5 max", converter.shuntingYard("max ( 3 - 4 / sin ( 2 ) , 5 )"));
+		assertEquals("3 6 2.5 4 ^ 5 ^ * + -3.4 0 max 3.3 cos * -", converter.shuntingYard("3 + 6 * 2.5 ^ 4 ^ 5 - max ( -3.4 , 0 ) * cos ( 3.3 )"));
 	}
 
 }
