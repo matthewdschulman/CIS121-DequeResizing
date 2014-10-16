@@ -19,6 +19,9 @@ public class InfixToPostfix {
      *             if the input is null
      */
     public static String simpleShuntingYard(String input) {
+    	if (input == null) {
+    		throw new IllegalArgumentException();
+    	}
     	Tokenizer tokenizer = new Tokenizer(input);
         DequeStack<String> stack = new DequeStack<String>();
         Iterator<String> iterator = tokenizer.getIterator();
