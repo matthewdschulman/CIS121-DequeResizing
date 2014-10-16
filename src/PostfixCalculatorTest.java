@@ -24,6 +24,12 @@ public class PostfixCalculatorTest {
 	
 	@SuppressWarnings("static-access")
 	@Test
+	public void testValidExpressionWithAllOperators() {		
+		calculator.calculate("4 4 +");
+	}
+	
+	@SuppressWarnings("static-access")
+	@Test
 	public void testInvalidExpressionTooManyNumbers() {		
 		exception.expect(IllegalArgumentException.class);
 		calculator.calculate("4 4 4 +");
@@ -34,6 +40,13 @@ public class PostfixCalculatorTest {
 	public void testInvalidExpressionTooFewNumbers() {		
 		exception.expect(IllegalArgumentException.class);
 		calculator.calculate("4 +");
+	}
+	
+	@SuppressWarnings("static-access")
+	@Test
+	public void testInvalidExpressionTooFewNumbers2() {		
+		exception.expect(IllegalArgumentException.class);
+		calculator.calculate("4 4 - *");
 	}
 	
 	@SuppressWarnings("static-access")

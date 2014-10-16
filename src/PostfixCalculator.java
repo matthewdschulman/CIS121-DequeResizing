@@ -31,11 +31,10 @@ public class PostfixCalculator {
         	}
         }
         //at this point, stack should have size 1 and that element should be a number
-        makeSureStackHasSolution(stack);
-        return Float.parseFloat(stack.pop());
+        return makeSureStackHasSolution(stack);
     }
 
-	private static void makeSureStackHasSolution(DequeStack<String> stack) {
+	private static float makeSureStackHasSolution(DequeStack<String> stack) {
 		String topNumber = stack.pop();
 		if (!topNumber.matches("-?\\d+(\\.\\d+)?")) {
 			throw new IllegalArgumentException();
@@ -43,32 +42,33 @@ public class PostfixCalculator {
 		if (!stack.empty()) {
 			throw new IllegalArgumentException();
 		}	
+		return Float.parseFloat(topNumber);
 	}
 
 	private static DequeStack<String> updateStack(DequeStack<String> stack) {
 		if (stack.peek().equals("+")) {
-			makeSureTopTwoElementsAreNumbers(stack);
+			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) + Float.parseFloat(stack.pop())));
 		} else if (stack.peek().equals("*")) {
-			makeSureTopTwoElementsAreNumbers(stack);
+			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) * Float.parseFloat(stack.pop())));
 		} else if (stack.peek().equals("/")) {
-			makeSureTopTwoElementsAreNumbers(stack);
+			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) / Float.parseFloat(stack.pop())));
 		} else if (stack.peek().equals("-")) {
-			makeSureTopTwoElementsAreNumbers(stack);
+			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Float.parseFloat(stack.pop()) - Float.parseFloat(stack.pop())));
 		} else if (stack.peek().equals("^")) {
-			makeSureTopTwoElementsAreNumbers(stack);
+			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Math.pow(Float.parseFloat(stack.pop()),Float.parseFloat(stack.pop()))));
 		} else if (stack.peek().equals("max")) {
-			makeSureTopTwoElementsAreNumbers(stack);
+			stack = makeSureTopTwoElementsAreNumbers(stack);
 			stack.push(String.valueOf(Math.max(Float.parseFloat(stack.pop()),Float.parseFloat(stack.pop()))));
 		} else if (stack.peek().equals("sin")) {
-			makeSureTopOneElementIsANumbers(stack);
+			stack = makeSureTopOneElementIsANumbers(stack);
 			stack.push(String.valueOf(Math.sin(Float.parseFloat(stack.pop()))));
 		} else if (stack.peek().equals("cos")) {
-			makeSureTopOneElementIsANumbers(stack);
+			stack = makeSureTopOneElementIsANumbers(stack);
 			stack.push(String.valueOf(Math.cos(Float.parseFloat(stack.pop()))));
 		} else {
 			throw new IllegalArgumentException();
@@ -76,26 +76,40 @@ public class PostfixCalculator {
 		return stack;
 	}
 
-	private static void makeSureTopOneElementIsANumbers(DequeStack<String> stack) {
+	private static DequeStack<String> makeSureTopOneElementIsANumbers(DequeStack<String> stack) {
+		if (stack.empty()) {
+			throw new IllegalArgumentException();
+		}
+		stack.pop();
 		if (stack.empty()) {
 			throw new IllegalArgumentException();
 		}
 		if (!stack.peek().matches("-?\\d+(\\.\\d+)?")) {
 			throw new IllegalArgumentException();
 		}
+		return stack;
 	}
 
-	private static void makeSureTopTwoElementsAreNumbers(
+	private static DequeStack<String> makeSureTopTwoElementsAreNumbers(
 			DequeStack<String> stack) {
-		String topNumber = stack.pop();
+		//get rid of operator
+		
 		if (stack.empty()) {
 			throw new IllegalArgumentException();
 		}
-		if (!topNumber.matches("-?\\d+(\\.\\d+)?") || !stack.peek().matches("-?\\d+(\\.\\d+)?")) {
+		stack.pop();
+		String topOfStack = stack.pop();
+		if (stack.empty()) {
 			throw new IllegalArgumentException();
 		}
-		//put back on the top number to the top of the stack
-		stack.push(topNumber);		
+		String secondOnStack = stack.pop();
+		if (!topOfStack.matches("-?\\d+(\\.\\d+)?") || !secondOnStack.matches("-?\\d+(\\.\\d+)?")) {
+			throw new IllegalArgumentException();
+		}
+		//put back on the top number and 2nd number to the top of the stack
+		stack.push(secondOnStack);		
+		stack.push(topOfStack);	
+		return stack;
 	}
 
 	private static boolean isValid(String expr) {
